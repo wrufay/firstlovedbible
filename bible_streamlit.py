@@ -4,16 +4,27 @@ import requests
 
 st.set_page_config(page_title="Fay's Bible", page_icon="☻", layout="centered")
 
-st.title("Search a Bible Verse (KJV)")
+st.header("Search a Bible Verse in KJV")
+
 
 with st.sidebar:
     st.header("Search Instructions")
     st.markdown("""
     - Search an entire chapter :red['Philippians 4']
+    
     - Search a single verse :red['Jeremiah 29:11']
+    
     - Search for a range of verses :red['Matthew 6:25-34']
-    - Search for multiple chapters :red['Genesis 1-2 or John 3:16-4:10']
+    
+    - Search for multiple chapters :red['Genesis 1-2'] or :red['John 3:16-4:10']
+    
+    
     """)
+    st.markdown("""
+                <div style='text-align: center; color: gray;'>
+                <small>Made with ❤️ by Fay</small>
+                </div>
+                """, unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 0.5, 0.5])
 
@@ -60,12 +71,3 @@ if search_button:
         st.warning("Please enter a chapter and verse.")
     else:
         st.warning("Please enter both a book name and verse.")
-
-
-
-# footer
-st.markdown("""
-<div style='text-align: center; color: gray;'>
-    <small>Made with ❤️ by Fay</small>
-</div>
-""", unsafe_allow_html=True)
