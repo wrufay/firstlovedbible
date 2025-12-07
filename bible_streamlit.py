@@ -8,7 +8,7 @@ st.set_page_config(page_title="Fay's Bible", page_icon="☻", layout="centered")
 if "verse_results" not in st.session_state:
     st.session_state.verse_results = None
  
-st.title("`𝚢𝚘𝚞𝚛 𝚍𝚊𝚒𝚕𝚢 𝚋𝚛𝚎𝚊𝚍 ☻`")
+st.title("`your daily bread ☻`")
 st.header("Search a Bible Verse in KJV")
 # want this color: #1866cc
 
@@ -86,7 +86,7 @@ if search_button:
 display_verse(st.session_state.verse_results)
         
 st.markdown("---")
-st.markdown("`𝚊𝚜𝚔 𝚚𝚞𝚎𝚜𝚝𝚒𝚘𝚗𝚜 𝚋𝚎𝚕𝚘𝚠 𝚝𝚘 𝚘𝚞𝚛 𝚜𝚒𝚕𝚕𝚢 𝚕𝚒𝚝𝚝𝚕𝚎 𝙻𝙻𝙼 (𝚐𝚙𝚝-𝟹.𝟻-𝚝𝚞𝚛𝚋𝚘)`")
+st.markdown("`ask questions below to our silly little LLM (gpt 3.5 turbo)`")
 
 # implement large language model
 
