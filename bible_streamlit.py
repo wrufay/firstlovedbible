@@ -36,7 +36,8 @@ if "verse_results" not in st.session_state:
     st.session_state.verse_results = None
  
 st.title("`☻ welcome`")
-st.markdown("`to your KJV bible & chat to guide you through your daily studies`")
+st.markdown("`to your KJV Bible.`")
+st.markdown("`Made to supplement (not replace!) your study sessions and daily devos.`")
 st.markdown("---")
 st.markdown("""<style>h1 { color: #1866cc }</style> <h1>lookup a chapter or verse:</h1>""", unsafe_allow_html=True)
 # want this color: #1866cc
