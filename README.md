@@ -1,3 +1,3 @@
-# wip bible app to learn python and streamlit
+# wip
 
 enjoy
