@@ -1,6 +1,7 @@
 from openai import OpenAI
 import streamlit as st
 import requests
+from st_copy_to_clipboard import st_copy_to_clipboard
 
 
 st.set_page_config(page_title="Fay's Bible", page_icon="☻", layout="centered")
@@ -35,14 +36,14 @@ st.markdown("""
 if "verse_results" not in st.session_state:
     st.session_state.verse_results = None
  
-st.title("`☻ welcome`")
-st.markdown("`to your personal bible - for supplementing your studies.`")
-st.markdown("---")
+st.write("**welcome!** open sidebar for more.")
 st.markdown("""<style>h1 { color: #1866cc }</style> <h1>lookup a chapter or verse:</h1>""", unsafe_allow_html=True)
 # want this color: #1866cc
 
 
 with st.sidebar:
+    st.markdown("`supplementing your bible studies just got easier.`")
+    st.markdown("---")
     st.header("Search Instructions")
     st.markdown("""
     - Search an `entire chapter` like :red[**Philippians 4**]
@@ -108,9 +109,17 @@ def display_verse(bible_content):
     if bible_content:
         st.markdown("---")
         st.badge(f"{bible_content['reference']}", color="blue")
+
+        reference = bible_content['reference']
+        base_ref = reference.split(':')[0] if ':' in reference else reference
+
         for v in bible_content["verses"]:
-            with st.container():
+            col_text, col_copy = st.columns([10, 1])
+            with col_text:
                 st.write(f'`{v["verse"]}` {v["text"]}')
+            with col_copy:
+                full_verse = f"{base_ref}:{v['verse']} - {v['text'].strip()}"
+                st_copy_to_clipboard(full_verse, before_copy_label="📋", after_copy_label="✓")
 
 
 if search_button:
