@@ -54,7 +54,7 @@ Rules:
 Tone: Warm, thoughtful, and encouraging."""
 }
 
-# css styling changes
+# css custom styling changes
 st.markdown("""
 <style>
     /*hide the AI profile pictures too corny LOL*/
@@ -64,7 +64,7 @@ st.markdown("""
     .stChatMessage svg {
         display: none !important;
     }
-    
+
     /*hide the text inside the feedback form (too crowded)*/
     .stForm [data-testid="stFormSubmitButton"]::after {
         display: none !important;
@@ -100,12 +100,10 @@ with st.sidebar:
         user_tz = ZoneInfo("America/Los_Angeles")
     now = datetime.now(user_tz)
     #st.markdown(f"**{now.strftime('%A, %B %d')}** {now.strftime('%I:%M %p').lstrip('0')}")
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        st.markdown(f":blue[helping you get your **daily bread**, even at {now.strftime('%I:%M%p').lstrip('0').lower()} on a random {now.strftime('%A').lower()}.]")
-    with col2:
-        if st.button("Log in", on_click=clear_login_inputs):
-            login_modal()
+    st.markdown(f":blue[helping you get your **daily bread**, even at {now.strftime('%I:%M%p').lstrip('0').lower()} on a random {now.strftime('%A').lower()}.]")
+    # with col2:
+    #     if st.button("Log in", on_click=clear_login_inputs):
+    #         login_modal()
 
     st.markdown("---")
     st.header("Search Instructions")
@@ -190,39 +188,41 @@ def display_verse(bible_content):
     if bible_content:
         st.markdown("---")
         st.badge(f"{bible_content['reference']}", color="blue")
-
         reference = bible_content['reference']
-    
         base_ref = reference.split(':')[0] if ':' in reference else reference
-        base_book = base_ref.split(" ")[0]
-        base_chapter = base_ref.split(" ")[1]
-
-        for v in bible_content["verses"]:
-            # col_text = st.columns(1)
-            # with col_text:
-            st.write(f'`{v["verse"]}` {v["text"]}')
-            # with col_copy:
-            #     full_verse = f"{base_ref}:{v['verse']} - {v['text'].strip()}"
-            #     st_copy_to_clipboard(full_verse, before_copy_label="ᴄᴏᴘʏ", after_copy_label="✓")
+        enduring_word_path = ""
+        
+        # check if the split is 3 or 2 
+        str_split = base_ref.split(" ") # split into list of 2 or 3 strings
+        cur_len = len(str_split)
+        ch = ""
+        ve = ""
+        pr = ""
+        if cur_len == 2:
+            ch=str_split[0]
+            ve=str_split[1]
+        elif cur_len == 3:
+            pr = f"{str_split[0]}-"
+            ch=str_split[1]
+            ve=str_split[2]
             
+            
+        # note bug: in enduring word they call it"psalm" without  the s.
+        if ch == "Psalms":
+            ch = "Psalm"
+        
+        enduring_word_path = f'https://enduringword.com/bible-commentary/{pr}{ch}-{ve}/'
+        for v in bible_content["verses"]:
+            st.write(f'`{v["verse"]}` {v["text"]}')
+    
         # add  a link to enduring word bible commentary
-        # + bibleref while im at it lol.
         st.markdown("---")
-        col1, col2, col3 = st.columns([2, 1, 1])
+        col1, col2 = st.columns([2, 1])
         with col1:
             st.markdown(f'**Read commentary on {base_ref}:**')
         with col2:
-            # note bug: in enduring word they call it"psalm" without  the s.
-            if base_book == "Psalms":
-                base_book = "Psalm"
             st.page_link(label=f':blue[from **Enduring Word**]',
-                        page=f'https://enduringword.com/bible-commentary/{base_book}-{base_chapter}/')
-        with col3:
-            # lol there has to be a more effecient way to resolve this
-            if base_book == "Psalm":
-                base_book = "Psalms"
-            st.page_link(label=f':blue[from **BibleRef**]',
-                        page=f'https://www.bibleref.com/{base_book}/{base_chapter}/{base_book}-chapter-{base_chapter}.html')
+                        page=enduring_word_path)
 
 
 # trigger with the search btn
@@ -254,7 +254,7 @@ for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-if prompt := st.chat_input("need more context or clarification?"):
+if prompt := st.chat_input("need more context?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)

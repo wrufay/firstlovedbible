@@ -1,3 +1,9 @@
+[client]
+showSidebarNavigation = false
+
+[ui]
+hideSidebarNav = true
+
 [theme]
 base="light"
 primaryColor="#ed665f"
