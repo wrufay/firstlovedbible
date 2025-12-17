@@ -26,6 +26,7 @@ def init_auth_state():
 @st.dialog("Welcome to your Bible")
 def auth_modal():
     """Combined modal for login, signup, and password reset"""
+    # NOTE: need to fix the forgot password, actually add the logic
     tab1, tab2, tab3 = st.tabs(["Sign In", "Create Account", "Forgot Password"])
 
     with tab1:
@@ -184,67 +185,38 @@ def parse_reference(reference):
         return book, verse
     return None, None
 
-@st.dialog("My Library")
-def saved_verses_modal():
-    """Modal to display saved verses with detail view"""
-    saved_verses = get_saved_verses()
+@st.dialog("Verse Details")
+def verse_detail_modal(verse):
+    """Modal to show details of a single saved verse"""
+    st.subheader(f"{verse['reference']} ({verse['translation']})")
 
-    if not saved_verses:
-        st.info("nothing here yet!")
-        return
-
-    # init
-    if "selected_verse_id" not in st.session_state:
-        st.session_state.selected_verse_id = None
-    # show details
-    if st.session_state.selected_verse_id:
-        # Find the selected verse
-        selected_verse = next((v for v in saved_verses if v['id'] == st.session_state.selected_verse_id), None)
-
-        if selected_verse:
-            if st.button("←", key="back_to_library"):
-                st.session_state.selected_verse_id = None
-                st.rerun()
-            st.markdown("---")
-            st.subheader(f"{selected_verse['reference']} ({selected_verse['translation']})")
-            if selected_verse.get('notes') and selected_verse['notes'].strip():
-                st.markdown("**your notes:**")
-                st.info(selected_verse['notes'])
-            else:
-                st.caption("no notes for this verse.")
-            st.markdown("---")
-            # action
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("Load this verse", key=f"load_detail_{selected_verse['id']}", use_container_width=True):
-                    book, verse_ref = parse_reference(selected_verse['reference'])
-                    if book and verse_ref:
-                        # load verse
-                        result = get_verse(book, verse_ref, selected_verse['translation'])
-                        if result:
-                            st.session_state.verse_results = result
-                            st.session_state.current_translation = selected_verse['translation']
-                            st.session_state.selected_verse_id = None  # Clear selection
-                            st.rerun()
-
-            with col2: # delete
-                if st.button("Delete", key=f"delete_detail_{selected_verse['id']}", type="secondary", use_container_width=True):
-                    if delete_saved_verse(selected_verse['id']):
-                        st.success("Verse deleted!")
-                        st.session_state.selected_verse_id = None  # Clear selection
-                        st.rerun()
-        else:
-            st.session_state.selected_verse_id = None
-            st.rerun()
-
+    # Display notes if they exist
+    if verse.get('notes') and verse['notes'].strip():
+        st.markdown("**your notes:**")
+        st.info(verse['notes'])
     else:
-        # shwo lib
-        st.write(f"You have {len(saved_verses)} saved verse(s):")
+        st.caption("no notes for this verse.")
 
-        for verse in saved_verses:
-            #show each verse as a button
-            if st.button(f"{verse['reference']} ({verse['translation']})", key=f"verse_{verse['id']}", use_container_width=True):
-                st.session_state.selected_verse_id = verse['id']
+    st.markdown("---")
+
+    # Action buttons
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button("Load this verse", key=f"load_detail_{verse['id']}", use_container_width=True):
+            book, verse_ref = parse_reference(verse['reference'])
+            if book and verse_ref:
+                # Fetch the verse
+                result = get_verse(book, verse_ref, verse['translation'])
+                if result:
+                    st.session_state.verse_results = result
+                    st.session_state.current_translation = verse['translation']
+                    st.rerun()
+
+    with col2:
+        if st.button("Delete", key=f"delete_detail_{verse['id']}", type="secondary", use_container_width=True):
+            if delete_saved_verse(verse['id']):
+                st.success("Verse deleted!")
                 st.rerun()
 
 
@@ -324,13 +296,18 @@ with st.sidebar:
         if st.button("Sign Out", key="logout_btn"):
             logout()
         st.markdown("---")
-        if st.button("See saved verses", key="open_saved_verses"):
-            saved_verses_modal()
-            
-        # add more stuff here
-        
-        
-        
+
+        # Show saved verses list
+        st.subheader("My Saved Verses")
+        saved_verses = get_saved_verses()
+
+        if not saved_verses:
+            st.caption("no saved verses yet!")
+        else:
+            for verse in saved_verses:
+                if st.button(f"{verse['reference']}", key=f"verse_{verse['id']}", use_container_width=True):
+                    verse_detail_modal(verse)
+
     else: # if user is not logged in, don't show
         if st.button("Sign In / Create Account", key="open_auth_modal"):
             auth_modal()
@@ -455,7 +432,7 @@ def display_verse(bible_content, translation="kjv"):
 
         # Save button (only show if logged in)
         if st.session_state.user:
-            notes_input = st.text_area("keep this passage for later!", key="verse_notes", placeholder="add your thoughts, reflections or notes here...")
+            notes_input = st.text_area("Keep this passage for later!", key="verse_notes", placeholder="add your thoughts, reflections or notes here...")
             if st.button("Save", key="save_verse_btn", use_container_width=True):
                 if save_verse_reference(reference, translation.upper(), notes_input):
                     st.success(f"Saved {reference} to your library!")
