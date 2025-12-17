@@ -32,7 +32,7 @@ def auth_modal():
 
     with tab1:
         # LOGIN
-        # st.write("Sign in to see your saved verses and notes")
+        st.write("Welcome back! Sign in to see your saved notes and verses.")
         login_email = st.text_input("Email", key="login_email")
         login_password = st.text_input("Password", type="password", key="login_password")
 
@@ -61,7 +61,7 @@ def auth_modal():
 
     with tab2:
         # SIGN UP
-        st.write("Level up your Bible study today.")
+        st.write("Create an account and level up your Bible study today.")
         signup_email = st.text_input("Email", key="signup_email")
         signup_password = st.text_input("Password (min 6 characters)", type="password", key="signup_password")
         signup_password_confirm = st.text_input("Confirm Password", type="password", key="signup_password_confirm")
