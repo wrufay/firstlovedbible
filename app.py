@@ -12,10 +12,9 @@ from streamlit_js_eval import streamlit_js_eval
 supabase = create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 
 # setup page
-st.set_page_config(page_title="Fay's Bible", page_icon="☻", layout="centered")
+st.set_page_config(page_title="daily bread 𓍯𓂃✍︎", page_icon="bread.ico", layout="centered")
 
-
-# Authentication functions
+# login authentication featurss
 def init_auth_state():
     """Initialize authentication session state"""
     if "user" not in st.session_state:
@@ -23,15 +22,17 @@ def init_auth_state():
     if "auth_mode" not in st.session_state:
         st.session_state.auth_mode = "login"  # 'login', 'signup', or 'reset'
 
-@st.dialog("Welcome to your Bible")
+@st.dialog(" ")
 def auth_modal():
     """Combined modal for login, signup, and password reset"""
+    #logo
+    st.image("bread.ico", width=67)
     # NOTE: need to fix the forgot password, actually add the logic
-    tab1, tab2, tab3 = st.tabs(["Sign In", "Create Account", "Forgot Password"])
+    tab1, tab2 = st.tabs(["Log in", "Create account"])  # tab3 commented out for now
 
     with tab1:
         # LOGIN
-        st.write("Sign in to access your saved verses and history")
+        # st.write("Sign in to see your saved verses and notes")
         login_email = st.text_input("Email", key="login_email")
         login_password = st.text_input("Password", type="password", key="login_password")
 
@@ -51,8 +52,6 @@ def auth_modal():
 
                     # set the session (in supa base client)
                     supabase.postgrest.auth(response.session.access_token)
-
-                    st.success(f"Welcome back, {response.user.email}!")
                     st.rerun()
 
                 except Exception as e:
@@ -62,7 +61,7 @@ def auth_modal():
 
     with tab2:
         # SIGN UP
-        st.write("Create an account to save verses and track your Bible study")
+        st.write("Level up your Bible study today.")
         signup_email = st.text_input("Email", key="signup_email")
         signup_password = st.text_input("Password (min 6 characters)", type="password", key="signup_password")
         signup_password_confirm = st.text_input("Confirm Password", type="password", key="signup_password_confirm")
@@ -82,7 +81,6 @@ def auth_modal():
                         })
 
                         if response.user:
-                            st.success("Account created successfully! You can now sign in.")
                             st.session_state.user = response.user
                             if response.session:
                                 st.session_state.access_token = response.session.access_token
@@ -97,20 +95,21 @@ def auth_modal():
             else:
                 st.error("Please fill in all fields")
 
-    with tab3:
-        # PASSWORD RESET
-        st.write("Enter your email to receive a password reset link")
-        reset_email = st.text_input("Email", key="reset_email")
-
-        if st.button("Send Reset Link", key="reset_btn"):
-            if reset_email:
-                try:
-                    supabase.auth.reset_password_email(reset_email)
-                    st.success("Password reset link sent! Check your email.")
-                except Exception as e:
-                    st.error(f"Failed to send reset link: {str(e)}")
-            else:
-                st.error("Please enter your email")
+    # FORGOT PASSWORD - Commented out for now
+    # with tab3:
+    #     # PASSWORD RESET
+    #     st.write("Enter your email to receive a password reset link")
+    #     reset_email = st.text_input("Email", key="reset_email")
+    #
+    #     if st.button("Send Reset Link", key="reset_btn"):
+    #         if reset_email:
+    #             try:
+    #                 supabase.auth.reset_password_email(reset_email)
+    #                 st.success("Password reset link sent! Check your email.")
+    #             except Exception as e:
+    #                 st.error(f"Failed to send reset link: {str(e)}")
+    #         else:
+    #             st.error("Please enter your email")
 
 def logout():
     """Log out the current user"""
@@ -216,7 +215,6 @@ def verse_detail_modal(verse):
     with col2:
         if st.button("Delete", key=f"delete_detail_{verse['id']}", type="secondary", use_container_width=True):
             if delete_saved_verse(verse['id']):
-                st.success("Verse deleted!")
                 st.rerun()
 
 
@@ -259,7 +257,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # init
-init_auth_state() 
+init_auth_state()
 
 # Restore Supabase auth session if user is logged in
 if "access_token" in st.session_state and st.session_state.access_token:
@@ -282,6 +280,7 @@ st.markdown("""<style>h1 { color: #1866cc }</style> <h1>lookup a chapter or vers
 
 # sidebar!
 with st.sidebar:
+    
     # full date and time
     try:
         user_tz = ZoneInfo(st.session_state.user_tz) if st.session_state.user_tz else ZoneInfo("America/Los_Angeles")
@@ -309,7 +308,7 @@ with st.sidebar:
                     verse_detail_modal(verse)
 
     else: # if user is not logged in, don't show
-        if st.button("Sign In / Create Account", key="open_auth_modal"):
+        if st.button("Sign in / Create account", key="open_auth_modal"):
             auth_modal()
 
     st.markdown("---")
@@ -435,7 +434,6 @@ def display_verse(bible_content, translation="kjv"):
             notes_input = st.text_area("Keep this passage for later!", key="verse_notes", placeholder="add your thoughts, reflections or notes here...")
             if st.button("Save", key="save_verse_btn", use_container_width=True):
                 if save_verse_reference(reference, translation.upper(), notes_input):
-                    st.success(f"Saved {reference} to your library!")
                     # Clear the notes input after saving
                     st.session_state.verse_notes = ""
 
