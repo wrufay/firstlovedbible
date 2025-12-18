@@ -310,7 +310,7 @@ with st.sidebar:
         saved_verses = get_saved_verses()
 
         if not saved_verses:
-            st.caption("No bookmarks here yet!")
+            st.caption("None yet.")
         else:
             for verse in saved_verses:
                 if st.button(f"✱ {verse['reference']}", key=f"verse_{verse['id']}"):
