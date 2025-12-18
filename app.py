@@ -19,7 +19,7 @@ from streamlit_js_eval import streamlit_js_eval
 supabase = create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 
 # setup page
-st.set_page_config(page_title="✎ bible app", page_icon="bread.ico", layout="centered")
+st.set_page_config(page_title="✱ daily bread bible", page_icon="bread.ico", layout="centered")
 
 # login authentication featurss
 def init_auth_state():
@@ -438,7 +438,7 @@ def display_verse(bible_content, translation="kjv"):
         
         # show save verse button only if logged in
         if st.session_state.user:
-            if st.button(f"✏︎ Bookmark {reference}", use_container_width=True):
+            if st.button(f"✱ Make a bookmark for {reference}"):
                 save_verse_modal(reference, translation.upper())
                 
                 
