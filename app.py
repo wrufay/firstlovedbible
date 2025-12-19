@@ -291,6 +291,16 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# JavaScript to remove footer completely
+st.markdown("""
+<script>
+    var footer = window.parent.document.getElementsByTagName("footer")[0];
+    if (footer) {
+        footer.style.display = "none";
+    }
+</script>
+""", unsafe_allow_html=True)
+
 # init
 init_auth_state()
 if "access_token" in st.session_state and st.session_state.access_token:
