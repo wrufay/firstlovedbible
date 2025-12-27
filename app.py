@@ -21,7 +21,7 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY") or st.secrets.get("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # setup page
-st.set_page_config(page_title="You are loved. ꣑ৎ", page_icon="logo.png", layout="centered", initial_sidebar_state="expanded")
+st.set_page_config(page_title="you are loved. ꣑ৎ", page_icon="logo.png", layout="centered", initial_sidebar_state="expanded")
 
 
 
@@ -286,15 +286,29 @@ st.markdown("""
     }
     .stApp {
         background: linear-gradient(135deg, #ffeef2, #ffe0e9);
-        text-align: center !important;
     }
 
-    /* center main content area */
+    /* center ALL main content */
     .main .block-container {
         text-align: center !important;
+        max-width: 100% !important;
     }
 
-    .main h1, .main h2, .main h3, .main p {
+    .main .block-container > div {
+        text-align: center !important;
+    }
+
+    .main h1, .main h2, .main h3, .main p, .main div {
+        text-align: center !important;
+    }
+
+    /* center columns */
+    .main [data-testid="column"] {
+        text-align: center !important;
+    }
+
+    /* center all form elements */
+    .main [data-testid="stVerticalBlock"] > div {
         text-align: center !important;
     }
 
@@ -395,7 +409,7 @@ if tz_string:
  
 # title and header of page
 st.markdown("<p style='color: #f56476;'>The Bible is more than a book; it's God's love letter to you</p>", unsafe_allow_html=True)
-st.header("You are *firstloved*, open it today. ꣑ৎ")
+st.header("You are *firstloved*, open it 💌 today. ꣑ৎ")
 # note: #1866cc
 
 
