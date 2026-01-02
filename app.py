@@ -507,7 +507,7 @@ with btn_col1:
     if "show_ai_chat" not in st.session_state:
         st.session_state.show_ai_chat = False
 
-    if st.button("Ask Claude" if not st.session_state.show_ai_chat else "Hide", use_container_width=True):
+    if st.button("Ask Claude" if not st.session_state.show_ai_chat else "Hide chat", use_container_width=True):
         st.session_state.show_ai_chat = not st.session_state.show_ai_chat
         st.rerun()
 with btn_col2:
