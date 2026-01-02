@@ -388,8 +388,6 @@ if "access_token" in st.session_state and st.session_state.access_token:
 
 if "verse_results" not in st.session_state:
     st.session_state.verse_results = None
-if "last_sent_verse_reference" not in st.session_state:
-    st.session_state.last_sent_verse_reference = None
 if "user_tz" not in st.session_state:
     st.session_state.user_tz = None
 tz_string = streamlit_js_eval(js_expressions="Intl.DateTimeFormat().resolvedOptions().timeZone", key="tz")
@@ -624,18 +622,11 @@ if st.session_state.get("show_ai_chat", False):
                 # making sure to provide current verse or chapter for context if available
                 system_message = SYSTEM_PROMPT["content"]
 
-                # Only send verse context if: (1) it's the first message, OR (2) the verse has changed
-                current_reference = st.session_state.verse_results['reference'] if st.session_state.verse_results else None
-                is_first_message = len(st.session_state.messages) == 1  # Only user's message is in there
-                verse_changed = current_reference != st.session_state.last_sent_verse_reference
-
-                if st.session_state.verse_results and (is_first_message or verse_changed):
+                if st.session_state.verse_results:
                     verse_text = "\n".join(
                         f'{v["verse"]}. {v["text"]}' for v in st.session_state.verse_results["verses"]
                     )
                     system_message += f"\n\nThe user is currently viewing {st.session_state.verse_results['reference']}:\n{verse_text}"
-                    # Update the last sent reference
-                    st.session_state.last_sent_verse_reference = current_reference
 
                 with client.messages.stream(
                     model=st.session_state["anthropic_model"],
