@@ -1,4 +1,4 @@
-# supplement your Bible studies with _firstloved_ ꣑ৎ
+# Supplement your Bible studies with _firstloved_ ꣑ৎ
 
 ## Purpose
 
@@ -22,11 +22,13 @@
 - Powered by Claude using **Anthropic API**, and gets Bible information from https://bible-api.com/
 - Other tools - Docker, Render, Cloudflare
 
-**todos/fixes:**
+### todos/fixes:\*\*
 
 - keep the user logged in after refreshing (+ potentially cur. state)
 - order the saved verses better (in order of book)
 - fix: can only search max. 2 chapters at a time
 - implement community features
 
-### Thanks for stopping by. You can contact me at **f26wu[at]uwaterloo[dot]ca**
+### Thanks for stopping by.
+
+You can contact me at **f26wu[at]uwaterloo[dot]ca**
